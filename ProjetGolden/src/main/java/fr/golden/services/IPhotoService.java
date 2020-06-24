@@ -7,6 +7,14 @@ import fr.golden.models.Photo;
 
 public interface IPhotoService {
 	
-	public Photo add(Album album, Photo photo);
+	public Photo saveOnDisk(Album al, MultipartFile file, String img_name);
+	
+	public Photo getById(int id);
+	
+	public Photo getByName(String name);
+	
+	public Photo update(Photo photo);
+	
+	public void delete(int id);
 
 }

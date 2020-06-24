@@ -19,7 +19,7 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @Entity
 @XmlRootElement
-@Table(name = "pictures")
+@Table(name = "comments")
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
 property = "id")
 public class Comment {

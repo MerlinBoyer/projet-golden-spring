@@ -6,4 +6,5 @@ import fr.golden.models.Album;
 
 public interface IAlbumDao extends JpaRepository<Album, Integer>{
 
+	public Album findByName(String Name);
 }

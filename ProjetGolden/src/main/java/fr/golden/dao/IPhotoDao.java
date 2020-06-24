@@ -6,4 +6,5 @@ import fr.golden.models.Photo;
 
 public interface IPhotoDao extends JpaRepository<Photo, Integer>{
 
+	public Photo findByName(String Name);
 }

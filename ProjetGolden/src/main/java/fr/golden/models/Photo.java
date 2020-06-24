@@ -20,6 +20,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @Entity
@@ -47,6 +49,7 @@ public class Photo {
 	private int nbDownloads;
 	
 	@Transient
+	@JsonProperty(access = Access.READ_ONLY)
 	private MultipartFile image;
 	
 	
@@ -91,7 +94,20 @@ public class Photo {
 	}
 	public void setNbDownloads(int nbDownloads) {
 		this.nbDownloads = nbDownloads;
-	}	
+	}
+	public MultipartFile getImage() {
+		return image;
+	}
+	public void setImage(MultipartFile image) {
+		this.image = image;
+	}
+	@Override
+	public String toString() {
+		return "Photo [id=" + id + ", size=" + size + ", dateCreation=" + dateCreation + ", name=" + name
+				+ ", nbDownloads=" + nbDownloads + ", image=" + image + "]";
+	}
+	
+	
 	
 	
 }

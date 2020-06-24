@@ -32,7 +32,7 @@ public class Album {
 		@Column(name = "id_alb")
 		protected int id;
 		
-		@OneToMany(mappedBy = "album", cascade= { CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.DETACH},fetch=FetchType.LAZY)
+		@OneToMany(mappedBy = "album", cascade= { CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.DETACH}, fetch=FetchType.LAZY)
 		private List<Photo> pictures;
 		
 		private String name;

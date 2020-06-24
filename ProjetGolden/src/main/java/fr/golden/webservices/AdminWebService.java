@@ -1,8 +1,11 @@
 package fr.golden.webservices;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import javax.servlet.annotation.MultipartConfig;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
@@ -48,14 +51,22 @@ public class AdminWebService {
 	
 	@PostMapping(value="/registerAlbum", produces="application/json")
 	public Album register(@RequestBody Album album) {
-		
 		return albumService.add(album);
 	}
 	
-	@PostMapping(value="/addPhoto")
-	public Photo register(@RequestParam("album") Album album, @RequestParam("photo") Photo photo) {
+	@PostMapping(value="/savePhoto")
+	public Photo register(@RequestParam("imageFile") MultipartFile file,
+			@RequestParam("album_name") String album_name,
+			@RequestParam("album_id") String al_id) throws IOException {
 		
-		return photoService.add(album, photo);
+		System.out.println(" img : " + file.getOriginalFilename());
+		System.out.println(" from alb : " + Integer.parseInt(al_id) + " : " + album_name);
+		String img_name = file.getOriginalFilename();
+		
+		Album al = albumService.getById( Integer.parseInt(al_id) );
+		if(al == null) return null;
+		
+		return photoService.saveOnDisk(al, file, file.getOriginalFilename());
 	}
 
 }
