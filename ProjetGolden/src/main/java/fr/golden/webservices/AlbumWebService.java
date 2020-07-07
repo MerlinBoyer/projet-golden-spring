@@ -1,20 +1,12 @@
 package fr.golden.webservices;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import javax.annotation.Resource;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,21 +15,22 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import fr.golden.models.Album;
 import fr.golden.models.Photo;
+import fr.golden.services.IAlbumService;
 import fr.golden.services.IPhotoService;
 
 @CrossOrigin(origins="*")
 @RestController
-@RequestMapping("/public/photos")
-public class PhotoWebService {
+@RequestMapping("/public/album")
+public class AlbumWebService {
 
 	
 	@Autowired
-	private IPhotoService photoService;
+	private IAlbumService albumService;
 	
 	@InitBinder
 	public void initBinder(WebDataBinder binder) {
@@ -52,36 +45,15 @@ public class PhotoWebService {
 		binder.registerCustomEditor(Date.class, new CustomDateEditor(df, false));
 	}
 	
+	@GetMapping(value="/getAll", produces="application/json")
+	public List<Album> getAll( ) {
+		
+		return albumService.getAll();
+	}
+	
 	@GetMapping(value="/{pId}", produces="application/json")
-	public Photo getById(@PathVariable("pId") int id) {
+	public Album getById(@PathVariable("pId") int id) {
 		
-		return photoService.getById(id);
+		return albumService.getById(id);
 	}
-	
-	@CrossOrigin
-	@GetMapping(value="/getImg/{pId}", produces="image/jpg")
-	public void getImageById(@PathVariable("pId") int id, HttpServletResponse response) {
-		Photo p = photoService.getById(id);
-		if(p == null)	return;
-		
-		InputStream is = photoService.getFromDisk(id);
-		 try {
-		      // get your file as InputStream
-		      // copy it to response's OutputStream
-		      org.apache.commons.io.IOUtils.copy(is, response.getOutputStream());
-		      response.flushBuffer();
-		    } catch (IOException ex) {
-		      throw new RuntimeException("IOError writing file to output stream");
-		    }
-	}
-	
-	/*
-	@GetMapping(value="/getImg/{pId}")
-	public @ResponseBody byte[] getImageById(@PathVariable("pId") int id, HttpServletResponse response) throws IOException {
-		Photo p = photoService.getById(id);
-		if(p == null)	return null;
-		
-		return photoService.getFromDisk(id);
-		
-	}*/
 }

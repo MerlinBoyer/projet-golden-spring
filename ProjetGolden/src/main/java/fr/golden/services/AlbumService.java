@@ -1,6 +1,7 @@
 package fr.golden.services;
 
 import java.io.File;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +54,11 @@ public class AlbumService implements IAlbumService {
 	@Override
 	public Album getByName(String name) {
 		return albumDao.findByName(name);
+	}
+	
+	@Override
+	public List<Album> getAll() {
+		return albumDao.findAll();
 	}
 
 	@Override

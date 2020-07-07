@@ -1,12 +1,20 @@
 package fr.golden.services;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
 
+import javax.imageio.ImageIO;
+
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -56,11 +64,61 @@ public class PhotoService implements IPhotoService {
 		
 		return null;
 	}
-
+	
+	@Override
+	public InputStream getFromDisk(int id) {
+		Optional<Photo> o = photoDao.findById(id);
+		Photo p = o.get();
+		if(p == null || p.getAlbum() == null) {
+			return null;
+		}
+		p.getAlbum().setPictures(null);
+		
+		String ppp = rootPath + File.separator + p.getAlbum().getName() + File.separator + p.getName();
+		try {
+			File file = new File( ppp );
+			BufferedImage image = ImageIO.read( file );
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			ImageIO.write( image, "jpg", baos );
+			InputStream fis = new ByteArrayInputStream(baos.toByteArray());
+			return fis;
+		} catch (IllegalStateException e) {
+			e.printStackTrace();
+			return null;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	/*
+	@Override
+	public byte[] getFromDisk(int id) throws IOException {
+		Optional<Photo> o = photoDao.findById(id);
+		Photo p = o.get();
+		if(p == null || p.getAlbum() == null) {
+			return null;
+		}
+		p.getAlbum().setPictures(null);
+		String ppp = rootPath + File.separator + p.getAlbum().getName() + File.separator + p.getName();
+		File file = new File( ppp );
+		BufferedImage image = ImageIO.read( file );
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		ImageIO.write( image, "jpg", baos );
+		InputStream in = new ByteArrayInputStream(baos.toByteArray());
+		return IOUtils.toByteArray(in);
+	}
+	*/
+	
 	@Override
 	public Photo getById(int id) {
 		Optional<Photo> o = photoDao.findById(id);
-		return o.get();
+		Photo p = o.get();
+		if(p == null || p.getAlbum() == null) {
+			return p;
+		}
+		p.getAlbum().setPictures(null);
+		return p;
 	}
 
 	@Override

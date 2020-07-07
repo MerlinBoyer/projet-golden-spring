@@ -1,5 +1,7 @@
 package fr.golden.services;
 
+import java.util.List;
+
 import fr.golden.models.Album;
 
 public interface IAlbumService {
@@ -9,6 +11,8 @@ public interface IAlbumService {
 	public Album getById(int id);
 	
 	public Album getByName(String name);
+	
+	public List<Album>getAll();
 	
 	public Album update(Album album);
 	
