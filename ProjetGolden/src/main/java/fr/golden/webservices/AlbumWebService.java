@@ -48,12 +48,29 @@ public class AlbumWebService {
 	@GetMapping(value="/getAll", produces="application/json")
 	public List<Album> getAll( ) {
 		
-		return albumService.getAll();
+		List<Album> allAlbums = albumService.getAll();
+		for(Album al : allAlbums) {
+			al.setCode("");
+			if(al.getVisibility() == 0) {
+				al.setPictures( null );
+			}
+		}
+		return allAlbums;
 	}
 	
-	@GetMapping(value="/{pId}", produces="application/json")
-	public Album getById(@PathVariable("pId") int id) {
+	@GetMapping(value="/{pId}/{pCode}", produces="application/json")
+	public Album getById(@PathVariable("pId") int id, @PathVariable(value = "pCode", required = false) String code) {
 		
-		return albumService.getById(id);
+		Album album = albumService.getById(id);
+		
+		System.out.println("get Album : " + album.getCode() + " vs " + code);
+		
+		if(album.getVisibility() == 0 && album.getCode().compareTo(code) != 0 ) {
+			return null;
+		} else {
+			return album;
+		}
+		
+		
 	}
 }

@@ -52,15 +52,15 @@ public class PhotoWebService {
 		binder.registerCustomEditor(Date.class, new CustomDateEditor(df, false));
 	}
 	
-	@GetMapping(value="/{pId}", produces="application/json")
-	public Photo getById(@PathVariable("pId") int id) {
+	@GetMapping(value="/{pId}/{pCode}", produces="application/json")
+	public Photo getById(@PathVariable("pId") int id, @PathVariable(value = "pCode", required = false) String code ) {
 		
 		return photoService.getById(id);
 	}
 	
 	@CrossOrigin
-	@GetMapping(value="/getImg/{pId}", produces="image/jpg")
-	public void getImageById(@PathVariable("pId") int id, HttpServletResponse response) {
+	@GetMapping(value="/getImg/{pId}/{pCode}", produces="image/jpg")
+	public void getImageById(@PathVariable("pId") int id, @PathVariable(value = "pCode", required = false) String code, HttpServletResponse response) {
 		Photo p = photoService.getById(id);
 		if(p == null)	return;
 		
