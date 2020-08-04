@@ -70,6 +70,17 @@ public class AlbumService implements IAlbumService {
 	public void delete(int id) {
 		albumDao.deleteById(id);
 	}
+	
+	@Override
+	public Album changeName(int id, String albumName, String oldName) {
+		File newDir = new File(new File(rootPath), albumName);
+		File oldDir = new File(new File(rootPath), oldName);
+		Album alb = albumDao.findById(id).get();
+		
+		oldDir.renameTo( newDir );
+		alb.setName(albumName);
+		return albumDao.save( alb );
+	}
 
 	
 }

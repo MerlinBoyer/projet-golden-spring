@@ -11,8 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -68,5 +72,32 @@ public class AdminWebService {
 		
 		return photoService.saveOnDisk(al, file, file.getOriginalFilename());
 	}
+	
+	
+	
+	
+	@GetMapping(value="/album/{pId}", produces="application/json")
+	public Album getById(@PathVariable("pId") int id) {
+		return albumService.getById(id);
+	}
+	
+	@PutMapping(value="/album/update", produces="application/json")
+	public Album update(@RequestBody Album album) {
+		System.out.println("update album");
+		return albumService.update(album);
+	}
 
+	@PostMapping(value="/album/changeAlbumName", produces="application/json")
+	public Album changeName(@RequestParam("albumId") String id,
+			@RequestParam("albumName") String albumName,
+			@RequestParam("oldName") String old_name) {
+		System.out.println("update album name from " + old_name + " to " + albumName);
+		return albumService.changeName(Integer.parseInt(id),albumName, old_name);
+	}
+	
+	@DeleteMapping(value="/album/delete/{pId}", produces="application/json")
+	public void delete(@PathVariable("pId") int id) {
+		albumService.delete( id );
+	}
+	
 }
