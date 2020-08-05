@@ -17,5 +17,7 @@ public interface IAlbumService {
 	public Album update(Album album);
 	
 	public void delete(int id);
+
+	void synchronize();
 	
 }

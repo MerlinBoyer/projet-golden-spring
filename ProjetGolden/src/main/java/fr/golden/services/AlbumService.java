@@ -2,6 +2,10 @@ package fr.golden.services;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -97,6 +101,59 @@ public class AlbumService implements IAlbumService {
 		
 		// update album in db
 		return albumDao.save( album );
+	}
+	
+	
+	@Override
+	public void synchronize() {
+		this.parseAlbums(rootPath);
+	}
+	
+	public void parseAlbums( String path ) {
+
+        File root = new File( path );
+        File[] list = root.listFiles();
+
+        if (list == null) return;
+
+        for ( File f : list ) {
+            if ( f.isDirectory() ) {
+                syncAlbum( f.getAbsoluteFile() );
+            }
+        }
+    }
+	
+	public void syncAlbum(File f) {
+		String name = f.getName();
+		System.out.println("candidat album : " + name);
+		Album alb = this.getByName(name);
+		if( alb == null ) {
+			Album new_alb = new Album();
+			new_alb.setName(name);
+			new_alb.setCreation_date(new Date());
+			
+			File[] list = f.listFiles();
+			if (list == null) return;
+
+	        for ( File pic : list ) {
+	        	if ( pic.isDirectory() ) {
+	                syncAlbum( pic.getAbsoluteFile() );
+	            }
+	            String picName = pic.getName();
+	            Photo p = new Photo();
+	            p.setName(picName);
+	            p.setDateCreation(new Date());
+	            new_alb.addPic( p );
+	            p.setAlbum(new_alb);
+	        }
+	        
+	        albumDao.save(new_alb);
+	        
+	        System.out.println(" ---> created");
+		} else {
+			System.out.println(" ---> already exist");
+		}
+		
 	}
 
 	

@@ -1,6 +1,7 @@
 package fr.golden.models;
 
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -106,6 +107,12 @@ public class Album {
 			return "Album [id=" + id + ", name=" + name + ", path=" + path + ", visibility=" + visibility + ", code="
 					+ code + ", description=" + description + ", nb_visits=" + nb_visits + ", creation_date="
 					+ creation_date + "]";
+		}
+		public void addPic(Photo p) {
+			List<Photo> l = this.getPictures();
+			if( l == null) l = new ArrayList<Photo>();
+			l.add(p);
+			this.setPictures(l);
 		}
 		
 		

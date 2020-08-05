@@ -124,4 +124,9 @@ public class AdminWebService {
 		System.out.println("delete pic : " + id);
 		photoService.delete( id );
 	}
+	
+	@GetMapping(value="/synchronize")
+	public void sync() {
+		albumService.synchronize();
+	}
 }
