@@ -8,12 +8,15 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import javax.imageio.ImageIO;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -68,7 +71,12 @@ public class PhotoService implements IPhotoService {
 	@Override
 	public InputStream getFromDisk(int id) {
 		Optional<Photo> o = photoDao.findById(id);
-		Photo p = o.get();
+		Photo p = null;
+		try {
+			p = o.get();
+		} catch (final NoSuchElementException ex) {
+			ex.printStackTrace();
+		}
 		if(p == null || p.getAlbum() == null) {
 			return null;
 		}
@@ -113,7 +121,12 @@ public class PhotoService implements IPhotoService {
 	@Override
 	public Photo getById(int id) {
 		Optional<Photo> o = photoDao.findById(id);
-		Photo p = o.get();
+		Photo p = null;
+		try {
+			p = o.get();
+		} catch (final NoSuchElementException ex) {
+			ex.printStackTrace();
+		}
 		if(p == null || p.getAlbum() == null) {
 			return p;
 		}
@@ -133,7 +146,28 @@ public class PhotoService implements IPhotoService {
 
 	@Override
 	public void delete(int id) {
-		photoDao.deleteById(id);
+		Optional<Photo> o = photoDao.findById(id);
+		Photo p = null;
+		try {
+			p = o.get();
+		} catch (final NoSuchElementException ex) {
+			ex.printStackTrace();
+			return;
+		}
+		String ppp = rootPath + File.separator + p.getAlbum().getName() + File.separator + p.getName();
+		try {
+			boolean result = Files.deleteIfExists(Paths.get(ppp));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {			
+			photoDao.deleteById(id);
+		}
+	}
+	
+	@Override
+	public Photo add(Photo p) {
+		return photoDao.save( p );
 	}
 
 }

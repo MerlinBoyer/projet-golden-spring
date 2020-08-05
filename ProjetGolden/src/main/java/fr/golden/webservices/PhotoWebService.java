@@ -71,7 +71,7 @@ public class PhotoWebService {
 		      org.apache.commons.io.IOUtils.copy(is, response.getOutputStream());
 		      response.flushBuffer();
 		    } catch (IOException ex) {
-		      throw new RuntimeException("IOError writing file to output stream");
+		      System.out.println("ERROR CATCH : cant write pic in buffer [PhotoWebService.getImageById()]");
 		    }
 	}
 	

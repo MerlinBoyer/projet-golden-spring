@@ -23,4 +23,6 @@ public interface IPhotoService {
 	
 	public void delete(int id);
 
+	Photo add(Photo p);
+
 }

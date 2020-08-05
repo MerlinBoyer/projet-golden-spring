@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import javax.servlet.annotation.MultipartConfig;
 
@@ -73,6 +74,32 @@ public class AdminWebService {
 		return photoService.saveOnDisk(al, file, file.getOriginalFilename());
 	}
 	
+	@PostMapping(value="/addPhoto")
+	public Photo add(@RequestParam("imageFile") MultipartFile file,
+			@RequestParam("album_name") String album_name,
+			@RequestParam("album_id") String al_id) throws IOException {
+		
+		System.out.println(" img : " + file.getOriginalFilename());
+		System.out.println(" from alb : " + Integer.parseInt(al_id) + " : " + album_name);
+		String img_name = file.getOriginalFilename();
+		
+		Album al = albumService.getById( Integer.parseInt(al_id) );
+		if(al == null) return null;
+		
+		// add pic into album metadata
+		Photo p = new Photo();
+		p.setName(img_name);
+		p.setAlbum( al );
+		p = photoService.add( p );
+		List<Photo> l = al.getPictures();
+		l.add(p);
+		al.setPictures( l );
+		al.getPictures().forEach(System.out::println);
+		albumService.update(al);
+		
+		return photoService.saveOnDisk(al, file, file.getOriginalFilename());
+	}
+	
 	
 	
 	
@@ -83,16 +110,8 @@ public class AdminWebService {
 	
 	@PutMapping(value="/album/update", produces="application/json")
 	public Album update(@RequestBody Album album) {
-		System.out.println("update album");
+		System.out.println("update album : " + album);
 		return albumService.update(album);
-	}
-
-	@PostMapping(value="/album/changeAlbumName", produces="application/json")
-	public Album changeName(@RequestParam("albumId") String id,
-			@RequestParam("albumName") String albumName,
-			@RequestParam("oldName") String old_name) {
-		System.out.println("update album name from " + old_name + " to " + albumName);
-		return albumService.changeName(Integer.parseInt(id),albumName, old_name);
 	}
 	
 	@DeleteMapping(value="/album/delete/{pId}", produces="application/json")
@@ -100,4 +119,9 @@ public class AdminWebService {
 		albumService.delete( id );
 	}
 	
+	@DeleteMapping(value="/photo/delete/{pId}", produces="application/json")
+	public void deleteP(@PathVariable("pId") int id) {
+		System.out.println("delete pic : " + id);
+		photoService.delete( id );
+	}
 }
