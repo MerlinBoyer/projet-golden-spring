@@ -10,6 +10,8 @@ public interface IAlbumService {
 	
 	public Album getById(int id);
 	
+	public String getAlbumPathById(int id);
+		
 	public Album getByName(String name);
 	
 	public List<Album>getAll();

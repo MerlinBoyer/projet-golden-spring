@@ -1,12 +1,23 @@
 package fr.golden.webservices;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -72,5 +83,45 @@ public class AlbumWebService {
 		}
 		
 		
+	}
+	
+	@GetMapping(value="/download/{pId}/{pCode}", produces="application/zip")
+	public void downloadById(@PathVariable("pId") int id, 
+			@PathVariable(value = "pCode", required = false) String pCode,
+			HttpServletResponse response	) throws IOException {
+		
+		Album album = albumService.getById(id);
+		if(album.getVisibility() == 0 && album.getCode().compareTo(pCode) != 0 ) {
+			System.out.println("Code album num " + id + "non valide, download aborted");
+			return;
+		}
+		
+		String zipPath = albumService.getAlbumPathById(id);
+		
+		System.out.println("DOWNLOAD ALBUM : " +zipPath );
+		
+		//setting headers  
+	    response.setStatus(HttpServletResponse.SC_OK);
+	    response.addHeader("Content-Disposition", "attachment; filename=\"album.zip\"");
+
+	    ZipOutputStream zipOutputStream = new ZipOutputStream(response.getOutputStream());
+
+	    // create a list to add files to be zipped
+	    File root = new File( zipPath );
+	    File[] files = root.listFiles();
+
+	    // package files
+	    for (File file : files) {
+	        //new zip entry and copying inputstream with file to zipOutputStream, after all closing streams
+	        zipOutputStream.putNextEntry(new ZipEntry(file.getName()));
+	        FileInputStream fileInputStream = new FileInputStream(file);
+
+	        IOUtils.copy(fileInputStream, zipOutputStream);
+
+	        fileInputStream.close();
+	        zipOutputStream.closeEntry();
+	    }    
+
+	    zipOutputStream.close();
 	}
 }

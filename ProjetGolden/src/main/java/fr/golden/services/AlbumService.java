@@ -56,6 +56,18 @@ public class AlbumService implements IAlbumService {
 	    System.out.println("erreur de creation");
 		return null;
 	}
+	
+	@Override
+	public String getAlbumPathById(int id) {
+		Optional<Album> o = albumDao.findById(id);
+		Album alb = null;
+		try {
+			alb = o.get();
+		} catch (final NoSuchElementException ex) {
+			ex.printStackTrace();
+		}
+		return rootPath + File.separator + alb.getName();
+	}
 
 	@Override
 	public Album getById(int id) {
