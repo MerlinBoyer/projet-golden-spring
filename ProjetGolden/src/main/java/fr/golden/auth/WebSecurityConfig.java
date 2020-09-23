@@ -59,16 +59,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			// We don't need CSRF for this example
 			httpSecurity.csrf().disable()
 				// dont authenticate this particular requests
-				.authorizeRequests().antMatchers("/public/**").permitAll()
-				.antMatchers("/register").permitAll()
-				.antMatchers("/registerAdmin").permitAll()
-				.antMatchers("/authenticate").permitAll()
+				.authorizeRequests().antMatchers("/**/public/**").permitAll()
+				.antMatchers("/**/register").permitAll()
+				.antMatchers("/**/registerAdmin").permitAll()
+				.antMatchers("/**/authenticate").permitAll()
 				
 				// Authorize ANGULAR OPTIONS CALLS
 				.antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 				
 				// Admin only
-				.antMatchers("/admin/**").hasRole("ADMIN")
+				.antMatchers("/**/admin/**").hasRole("ADMIN")
 				
 				// all other requests need to be authenticated
 				.anyRequest().authenticated().and().
