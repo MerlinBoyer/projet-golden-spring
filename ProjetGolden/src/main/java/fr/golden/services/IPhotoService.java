@@ -10,10 +10,12 @@ import fr.golden.models.Photo;
 
 public interface IPhotoService {
 	
-	public Photo saveOnDisk(Album al, MultipartFile file, String img_name);
+	public Photo saveOnDisk(MultipartFile file, String imgPath);
+	
+	public Photo compressAndSaveOnDisk(String pathImgFullSize);
 	
 	// public byte[] getFromDisk(int id) throws IOException;
-	public InputStream getFromDisk(int id);
+	public InputStream getFromDisk(int id, boolean isCompressedImage);
 	
 	public Photo getById(int id);
 	

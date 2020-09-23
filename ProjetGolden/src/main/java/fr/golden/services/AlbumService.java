@@ -25,9 +25,11 @@ public class AlbumService implements IAlbumService {
 	private IAlbumDao albumDao;
 	
 	private static final String rootPath = "albums";
+	private static final String rootPath_compressed = "albums_compressed";
 
 	public AlbumService() {
 		(new File(rootPath)).mkdir();
+		(new File(rootPath_compressed)).mkdir();
 	}
 	
 	@Override
@@ -41,6 +43,9 @@ public class AlbumService implements IAlbumService {
 		}
 		boolean success = newDir.mkdir();
 	    if (success) {
+	    	// create dir for compressed images
+	    	File compressedDir = new File(new File(rootPath_compressed), album.getName());
+	    	compressedDir.mkdir();
 	    	// 2. create dir and save it in db
 	      System.out.println("Directory: " + album.getName() + " created");
 	      for(Photo p : album.getPictures()) {
@@ -123,6 +128,8 @@ public class AlbumService implements IAlbumService {
         }
     }
 	
+	
+	// TODO should also synchronize with compressed images
 	public void syncAlbum(File f) {
 		String name = f.getName();
 		System.out.println("candidat album : " + name);

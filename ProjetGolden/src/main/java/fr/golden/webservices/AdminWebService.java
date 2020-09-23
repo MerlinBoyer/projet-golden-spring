@@ -1,5 +1,6 @@
 package fr.golden.webservices;
 
+import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -68,10 +69,15 @@ public class AdminWebService {
 		System.out.println(" from alb : " + Integer.parseInt(al_id) + " : " + album_name);
 		String img_name = file.getOriginalFilename();
 		
+		// check if album exists
 		Album al = albumService.getById( Integer.parseInt(al_id) );
 		if(al == null) return null;
 		
-		return photoService.saveOnDisk(al, file, file.getOriginalFilename());
+		// save full size image
+		String imgPath = album_name + File.separator + img_name;
+		photoService.saveOnDisk(file, imgPath);
+		// save compressed image
+		return photoService.compressAndSaveOnDisk(imgPath);
 	}
 	
 	@PostMapping(value="/addPhoto")
@@ -97,7 +103,11 @@ public class AdminWebService {
 		al.getPictures().forEach(System.out::println);
 		albumService.update(al);
 		
-		return photoService.saveOnDisk(al, file, file.getOriginalFilename());
+		// save full size image
+		String imgPath = album_name + File.separator + img_name;		
+		photoService.saveOnDisk(file, imgPath);
+		// save compressed image
+		return photoService.compressAndSaveOnDisk(imgPath);
 	}
 	
 	

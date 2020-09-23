@@ -27,6 +27,7 @@ target/
 /.nb-gradle/
 build/
 albums/
+albums_compressed/
 
 ### VS Code ###
 .vscode/

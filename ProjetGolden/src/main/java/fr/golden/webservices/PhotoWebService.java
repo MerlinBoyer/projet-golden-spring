@@ -64,7 +64,24 @@ public class PhotoWebService {
 		Photo p = photoService.getById(id);
 		if(p == null)	return;
 		
-		InputStream is = photoService.getFromDisk(id);
+		InputStream is = photoService.getFromDisk(id, false);
+		 try {
+		      // get your file as InputStream
+		      // copy it to response's OutputStream
+		      org.apache.commons.io.IOUtils.copy(is, response.getOutputStream());
+		      response.flushBuffer();
+		    } catch (IOException ex) {
+		      System.out.println("ERROR CATCH : cant write pic in buffer [PhotoWebService.getImageById()]");
+		    }
+	}
+	
+	@CrossOrigin
+	@GetMapping(value="/getCompressedImg/{pId}/{pCode}", produces="image/jpg")
+	public void getCompressedImageById(@PathVariable("pId") int id, @PathVariable(value = "pCode", required = false) String code, HttpServletResponse response) {
+		Photo p = photoService.getById(id);
+		if(p == null)	return;
+		
+		InputStream is = photoService.getFromDisk(id, true);
 		 try {
 		      // get your file as InputStream
 		      // copy it to response's OutputStream
