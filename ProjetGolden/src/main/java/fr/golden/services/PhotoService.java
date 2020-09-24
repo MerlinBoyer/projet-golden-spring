@@ -122,6 +122,51 @@ public class PhotoService implements IPhotoService {
 	}
 	
 	@Override
+	public Photo compressAndSaveOnDiskWithCustomParams(String path, Float compressionFactor, Float customMaxImgSize, int maxResizedW, int maxResizedH) {
+		String pathImgFullSize = rootPath + File.separator + path;
+		File imgFullSizeFile = new File( pathImgFullSize );
+		String pathImgCompressed= rootPath_compressed + File.separator + path;
+		File imgCompressedFile = new File( pathImgCompressed );
+		
+		//first check if full size image exist
+		if(!imgFullSizeFile.exists()) {
+			System.out.println("impossible de compresser pathImgFullSize : image full size not found");
+			return null;
+		}
+		
+		try {
+			BufferedImage image = ImageIO.read(imgFullSizeFile);
+		    OutputStream os = new FileOutputStream(imgCompressedFile);
+
+		    Iterator<ImageWriter> writers = ImageIO.getImageWritersByFormatName("jpg");
+		    ImageWriter writer = (ImageWriter) writers.next();
+
+		    ImageOutputStream ios = ImageIO.createImageOutputStream(os);
+		    writer.setOutput(ios);
+
+		    ImageWriteParam param = writer.getDefaultWriteParam();
+		    param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+		    // resize image
+		    int biggestSide = image.getWidth() > image.getHeight() ? image.getWidth() : image.getHeight();
+		    if(biggestSide > 1080) {
+		    	Float factor =  customMaxImgSize / biggestSide;
+		    	image = resize(image, (int) (factor * image.getWidth()), (int)(factor * image.getHeight()));
+		    }
+		    // compress image
+		    param.setCompressionQuality(compressionFactor);
+		    writer.write(null, new IIOImage(image, null, null), param);
+
+		    os.close();
+		    ios.close();
+		    writer.dispose();
+		} catch (IOException e) {
+			System.out.println("error when compressing and saving : " + pathImgCompressed);
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	@Override
 	public InputStream getFromDisk(int id, boolean isCompressedImage) {
 		Optional<Photo> o = photoDao.findById(id);
 		Photo p = null;

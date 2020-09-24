@@ -14,6 +14,8 @@ public interface IPhotoService {
 	
 	public Photo compressAndSaveOnDisk(String pathImgFullSize);
 	
+	public Photo compressAndSaveOnDiskWithCustomParams(String pathImgFullSize, Float compressionFactor, Float maxImgSize, int maxResizedW, int maxResizedH);
+	
 	// public byte[] getFromDisk(int id) throws IOException;
 	public InputStream getFromDisk(int id, boolean isCompressedImage);
 	

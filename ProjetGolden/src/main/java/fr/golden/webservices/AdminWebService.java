@@ -105,7 +105,7 @@ public class AdminWebService {
 		List<Photo> l = al.getPictures();
 		l.add(p);
 		al.setPictures( l );
-		al.getPictures().forEach(System.out::println);
+		//al.getPictures().forEach(System.out::println);
 		albumService.update(al);
 		
 		// save full size image
@@ -113,6 +113,28 @@ public class AdminWebService {
 		photoService.saveOnDisk(file, imgPath);
 		// save compressed image
 		return photoService.compressAndSaveOnDisk(imgPath);
+	}	
+	
+	@PostMapping(value="/compressAlbum", produces="application/json")
+	public Album compressAlbum(@RequestParam("albumId") String pId,
+			@RequestParam("compressionFactor") String pFactor,
+			@RequestParam("maxImgSize") String pMaxImgSize,
+			@RequestParam("maxResizedW") String pMaxResizedW,
+			@RequestParam("maxResizedH") String pMaxResizedH) {
+		
+		Float compressionFactor = Float.parseFloat(pFactor);
+		Float maxImgSize = Float.parseFloat(pMaxImgSize);
+		int maxResizedW = Integer.parseInt(pMaxResizedW);
+		int maxResizedH = Integer.parseInt(pMaxResizedH);
+		
+		Album al = this.albumService.getById(Integer.parseInt(pId));
+		if(al == null) return null;
+		for(int i = 0 ; i<al.getPictures().size() ; i++) {
+			Photo p = al.getPictures().get(i);
+			String imgPath = al.getName() + File.separator + p.getName();
+			photoService.compressAndSaveOnDiskWithCustomParams(imgPath, compressionFactor, maxImgSize, maxResizedW, maxResizedH);
+		}
+		return null;
 	}
 	
 	
