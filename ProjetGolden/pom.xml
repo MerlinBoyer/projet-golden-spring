@@ -18,7 +18,7 @@
 		<java.version>1.8</java.version>
 		<maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
     	<start-class>fr.adaming.ProjetGoldenApplication</start-class>
-    	<version.commons-io>2.4</version.commons-io>
+    	<version.commons-io>2.7</version.commons-io>
 	</properties>
 
 	<dependencies>
